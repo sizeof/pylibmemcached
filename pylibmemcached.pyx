@@ -382,7 +382,7 @@ cdef class Client:
     def pp(self):
         cdef char **ep
         ep = <char **>malloc((28 + 1)* sizeof(char*))
-        ep[0] = <char *>MEMCACHED_BEHAVIOR_NO_BLOCK
+        ep[0] = <char>MEMCACHED_BEHAVIOR_NO_BLOCK
         ep[1] = "tcp_nodelay"
         ep[2] = "hash"
         
