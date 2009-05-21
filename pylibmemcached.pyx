@@ -7,7 +7,8 @@ from python cimport \
     PyString_AsStringAndSize, \
     PyString_AsString, \
     PyString_FromStringAndSize, \
-    PySequence_Length
+    PySequence_Length, \
+    PyString_FromString
     
 cdef extern from "stdlib.h":
     ctypedef unsigned int size_t
@@ -375,9 +376,17 @@ cdef class Client:
         return (retval == 0)
 
     def pp(self):
-        cdef char **error_502_page
-        error_502_page[0]="dddd"
-        return error_502_page[0]
+        cdef char **ep
+        ep = <char **>malloc((2 + 1)* sizeof(char*))
+        ep[0] = "hello"
+        ep[1] = "world"
+        ep[2] = NULL
+        
+        d = PyString_FromString(ep[0])
+        
+        free(ep)
+        
+        return d
 
     def add(self, *args):
         return self._store_impl(MC_CMD_ADD, *args)
