@@ -7,8 +7,7 @@ from python cimport \
     PyString_AsStringAndSize, \
     PyString_AsString, \
     PyString_FromStringAndSize, \
-    PySequence_Length, \
-    Py_ssize_t
+    PySequence_Length
     
 cdef extern from "stdlib.h":
     ctypedef unsigned int size_t
