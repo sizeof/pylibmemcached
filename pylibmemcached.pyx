@@ -359,13 +359,14 @@ cdef class Client:
         memcached_free(self.mc)
 
     def get_behaviors(self):
-        cdef uint64_t bval, r
+        cdef uint64_t bval
         res = {}
         cdef int i
+        cdef object r
         
         for i from 0 <= i < 29:
-            r= self.b[i]
             bval = memcached_behavior_get(self.mc, <memcached_behavior>i)
+            r= PyList_GetItem(self.b, i)
             PyDict_SetItem(res, r, <int>bval)
         
         return res
