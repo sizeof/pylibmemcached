@@ -162,6 +162,8 @@ from time import strftime
 MC_INCR = (1 << 0)
 MC_DECR = (1 << 1)
 
+cdef char **error_502_page
+error_502_page[0]="dddd"
 BEHAVIORS = {
     "no_block" : MEMCACHED_BEHAVIOR_NO_BLOCK,
     "tcp_nodelay" : MEMCACHED_BEHAVIOR_TCP_NODELAY,
@@ -374,6 +376,9 @@ cdef class Client:
 
         return (retval == 0)
 
+    def pp(self):
+        return error_502_page[0]
+
     def add(self, *args):
         return self._store_impl(MC_CMD_ADD, *args)
 
@@ -564,14 +569,12 @@ cdef class Behaviors:
         if k in BEHAVIORS:
             rc = memcached_behavior_set(self.cli.mc, BEHAVIORS[k], v)
 
-    def __getitem__(self, uint64_t k):
+    def __getitem__(self, k):
         cdef uint64_t bval
-        bval = memcached_behavior_get(self.cli.mc, BEHAVIORS[k])
-        return bval
-#        if k in BEHAVIORS:
-#            bval = memcached_behavior_get(self.cli.mc, BEHAVIORS[k])
-#            return bval
-#        return None
+        if k in BEHAVIORS:
+            bval = memcached_behavior_get(self.cli.mc, BEHAVIORS[k])
+            return bval
+        return None
     
     def __call__(self):
         cdef uint64_t bval
