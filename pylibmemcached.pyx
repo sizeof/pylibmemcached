@@ -162,8 +162,6 @@ from time import strftime
 MC_INCR = (1 << 0)
 MC_DECR = (1 << 1)
 
-cdef char **error_502_page
-error_502_page[0]="dddd"
 BEHAVIORS = {
     "no_block" : MEMCACHED_BEHAVIOR_NO_BLOCK,
     "tcp_nodelay" : MEMCACHED_BEHAVIOR_TCP_NODELAY,
@@ -377,6 +375,8 @@ cdef class Client:
         return (retval == 0)
 
     def pp(self):
+        cdef char **error_502_page
+        error_502_page[0]="dddd"
         return error_502_page[0]
 
     def add(self, *args):
