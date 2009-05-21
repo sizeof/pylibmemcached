@@ -564,12 +564,14 @@ cdef class Behaviors:
         if k in BEHAVIORS:
             rc = memcached_behavior_set(self.cli.mc, BEHAVIORS[k], v)
 
-    def __getitem__(self, k):
+    def __getitem__(self, uint64_t k):
         cdef uint64_t bval
-        if k in BEHAVIORS:
-            bval = memcached_behavior_get(self.cli.mc, BEHAVIORS[k])
-            return bval
-        return None
+        bval = memcached_behavior_get(self.cli.mc, BEHAVIORS[k])
+        return bval
+#        if k in BEHAVIORS:
+#            bval = memcached_behavior_get(self.cli.mc, BEHAVIORS[k])
+#            return bval
+#        return None
     
     def __call__(self):
         cdef uint64_t bval
