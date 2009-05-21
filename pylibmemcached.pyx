@@ -164,8 +164,7 @@ from time import strftime
 MC_INCR = (1 << 0)
 MC_DECR = (1 << 1)
 
-cdef public enum:
-    AAA
+MEMCACHED_BEHAVIOR_NO_BLOCK = MEMCACHED_BEHAVIOR_NO_BLOCK
 
 BEHAVIORS = {
     "no_block" : MEMCACHED_BEHAVIOR_NO_BLOCK,
