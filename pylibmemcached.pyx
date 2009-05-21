@@ -365,7 +365,7 @@ cdef class Client:
         
         for i from 0 <= i < 29:
             bval = memcached_behavior_get(self.mc, <memcached_behavior>i)
-            r= PyList_GetItem(self.b, i)
+            r= PyList_GetItem(self.b, <object>i)
             PyDict_SetItem(res, r, <int>bval)
         
         return res
