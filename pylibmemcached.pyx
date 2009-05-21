@@ -8,7 +8,8 @@ from python cimport \
     PyString_AsString, \
     PyString_FromStringAndSize, \
     PySequence_Length, \
-    PyString_FromString
+    PyString_FromString, \
+    PyDict_SetItem, PyList_GetItem
     
 cdef extern from "stdlib.h":
     ctypedef unsigned int size_t
@@ -59,7 +60,7 @@ cdef extern from "libmemcached/memcached.h":
         MEMCACHED_MAXIMUM_RETURN
 
     ctypedef enum memcached_behavior:
-        MEMCACHED_BEHAVIOR_NO_BLOCK "no_block"
+        MEMCACHED_BEHAVIOR_NO_BLOCK
         MEMCACHED_BEHAVIOR_TCP_NODELAY
         MEMCACHED_BEHAVIOR_HASH
         MEMCACHED_BEHAVIOR_KETAMA
@@ -164,7 +165,7 @@ MC_INCR = (1 << 0)
 MC_DECR = (1 << 1)
 
 BEHAVIORS = {
-    "no_block" : MEMCACHED_BEHAVIOR_NO_BLOCK,
+    "no_block" : <uint64_t>MEMCACHED_BEHAVIOR_NO_BLOCK,
     "tcp_nodelay" : MEMCACHED_BEHAVIOR_TCP_NODELAY,
     "hash" : MEMCACHED_BEHAVIOR_HASH,
     "ketama" : MEMCACHED_BEHAVIOR_KETAMA,
@@ -194,6 +195,8 @@ BEHAVIORS = {
     "use_udp" : MEMCACHED_BEHAVIOR_USE_UDP,
     "auto_eject_hosts" : MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS
 }
+
+
 
 HASHERS = {
     'default' : MEMCACHED_HASH_DEFAULT,
@@ -271,6 +274,7 @@ cdef class Client:
     cdef object log
     cdef int log_threshold
     cdef public Behaviors behaviors
+    cdef object b
     
     def __new__(self, servers, int debug=0, log=None, int log_threshold=100000, behaviors_dict=None):
         """
@@ -282,6 +286,38 @@ cdef class Client:
         cdef memcached_server_distribution distribution
         cdef Behaviors behaviors
         cdef object updated_behaviors
+        
+        self.b = [
+            "no_block",
+            "tcp_nodelay",
+            "hash",
+            "ketama",
+            "socket_send_size",
+            "socket_recv_size",
+            "cache_lookups",
+            "support_cas",
+            "poll_timeout",
+            "distribution",
+            "buffer_requests",
+            "user_data",
+            "sort_hosts",
+            "verify_key",
+            "connect_timeout",
+            "retry_timeout",
+            "ketama_weighted",
+            "ketama_hash",
+            "binary_protocol",
+            "snd_timeout",
+            "rcv_timeout",
+            "server_failure_limit",
+            "io_msg_watermark",
+            "io_bytes_watermark",
+            "io_key_prefetch",
+            "hash_with_prefix_key",
+            "noreply",
+            "use_udp",
+            "auto_eject_hosts"
+        ]
         
         self.debug = debug
         self.log = log
@@ -321,28 +357,20 @@ cdef class Client:
 
     def __dealloc__(self):
         memcached_free(self.mc)
-        
-    property binary:
-        def __get__(self):
-            cdef uint64_t bval
-            bval = memcached_behavior_get(self.mc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL)
-            return bval
-        def __set__(self, value):
-            cdef memcached_return retval
-            retval = memcached_behavior_set(self.mc, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, <uint64_t>value)
-            #return (retval == 0)
-                
+
     def get_behaviors(self):
-        cdef uint64_t bval
+        cdef uint64_t bval, r
         res = {}
+        cdef int i
         
-        for name, flag in BEHAVIORS.items():
-            bval = memcached_behavior_get(self.mc, flag)
-            res[name] = bval
-            
+        for i from 0 <= i < 29:
+            bval = memcached_behavior_get(self.mc, <memcached_behavior>i)
+            r= PyList_GetItem(self.b, i)
+            PyDict_SetItem(res, r, <int>bval)
+        
         return res
         
-    def set_behavior(self, flag, uint64_t value):
+    def set_behavior(self, flag, value):
         if flag not in BEHAVIORS:
             raise KeyError('Behavior flag not found: "%s"' % flag)
         
@@ -378,17 +406,6 @@ cdef class Client:
             retval = memcached_replace(self.mc, c_key, key_len, c_val, bytes, time, flags)
 
         return (retval == 0)
-
-    def pp(self):
-        cdef char **ep
-        ep = <char **>malloc((28 + 1)* sizeof(char*))
-        ep[0] = <char *>MEMCACHED_BEHAVIOR_NO_BLOCK
-        ep[1] = "tcp_nodelay"
-        ep[2] = "hash"
-        
-        d = ep[0]
-        free(ep)
-        return d
 
     def add(self, *args):
         return self._store_impl(MC_CMD_ADD, *args)

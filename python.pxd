@@ -4,3 +4,5 @@ cdef extern from "Python.h":
     object PyString_FromString(char *v)
     char *PyString_AsString(object obj) except NULL
     int PySequence_Length(object o)
+    int PyDict_SetItem(object obj, object k, object v) except -1
+    object PyList_GetItem(object list, int index)
