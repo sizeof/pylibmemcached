@@ -164,8 +164,11 @@ from time import strftime
 MC_INCR = (1 << 0)
 MC_DECR = (1 << 1)
 
+cdef public enum:
+    AAA
+
 BEHAVIORS = {
-    "no_block" : <uint64_t>MEMCACHED_BEHAVIOR_NO_BLOCK,
+    "no_block" : MEMCACHED_BEHAVIOR_NO_BLOCK,
     "tcp_nodelay" : MEMCACHED_BEHAVIOR_TCP_NODELAY,
     "hash" : MEMCACHED_BEHAVIOR_HASH,
     "ketama" : MEMCACHED_BEHAVIOR_KETAMA,
