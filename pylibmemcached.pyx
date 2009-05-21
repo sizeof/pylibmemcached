@@ -208,6 +208,13 @@ HASHERS = {
     'jenkins' : MEMCACHED_HASH_JENKINS
 }
 
+cdef char **ep
+ep = <char **>malloc((28 + 1)* sizeof(char*))
+ep[0] = <char *>MEMCACHED_BEHAVIOR_NO_BLOCK
+ep[1] = "tcp_nodelay"
+ep[2] = "hash"
+
+
 
 class Error(Exception):
     pass
@@ -335,7 +342,7 @@ cdef class Client:
         
         for name, flag in BEHAVIORS.items():
             bval = memcached_behavior_get(self.mc, flag)
-            res[flag] = bval
+            res[name] = bval
             
         return res
         
@@ -377,16 +384,7 @@ cdef class Client:
         return (retval == 0)
 
     def pp(self):
-        cdef char **ep
-        ep = <char **>malloc((2 + 1)* sizeof(char*))
-        ep[0] = "hello"
-        ep[1] = "world"
-        ep[2] = NULL
-        
         d = ep[0]
-        
-        free(ep)
-        
         return d
 
     def add(self, *args):
