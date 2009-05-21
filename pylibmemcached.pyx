@@ -208,6 +208,7 @@ HASHERS = {
     'jenkins' : MEMCACHED_HASH_JENKINS
 }
 
+
 class Error(Exception):
     pass
 
@@ -334,7 +335,7 @@ cdef class Client:
         
         for name, flag in BEHAVIORS.items():
             bval = memcached_behavior_get(self.mc, flag)
-            res[name] = bval
+            res[flag] = bval
             
         return res
         
@@ -382,7 +383,7 @@ cdef class Client:
         ep[1] = "world"
         ep[2] = NULL
         
-        d = PyString_FromString(ep[0])
+        d = ep[0]
         
         free(ep)
         
