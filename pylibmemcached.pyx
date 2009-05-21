@@ -554,7 +554,7 @@ cdef class Client:
 cdef class Behaviors:
     cdef Client cli
 
-    def __cinit__(Behaviors self, Client cli, object update):
+    def __cinit__(Behaviors self, Client cli, object update=None):
         self.cli = cli
         if update:
             for k, v in update.items():
