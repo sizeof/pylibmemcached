@@ -59,7 +59,7 @@ cdef extern from "libmemcached/memcached.h":
         MEMCACHED_MAXIMUM_RETURN
 
     ctypedef enum memcached_behavior:
-        MEMCACHED_BEHAVIOR_NO_BLOCK
+        MEMCACHED_BEHAVIOR_NO_BLOCK "no_block"
         MEMCACHED_BEHAVIOR_TCP_NODELAY
         MEMCACHED_BEHAVIOR_HASH
         MEMCACHED_BEHAVIOR_KETAMA
@@ -382,7 +382,7 @@ cdef class Client:
     def pp(self):
         cdef char **ep
         ep = <char **>malloc((28 + 1)* sizeof(char*))
-        ep[0] = <char>MEMCACHED_BEHAVIOR_NO_BLOCK
+        ep[0] = <char *>MEMCACHED_BEHAVIOR_NO_BLOCK
         ep[1] = "tcp_nodelay"
         ep[2] = "hash"
         
