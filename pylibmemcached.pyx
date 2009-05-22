@@ -164,8 +164,6 @@ from time import strftime
 MC_INCR = (1 << 0)
 MC_DECR = (1 << 1)
 
-MEMCACHED_BEHAVIOR_NO_BLOCK = MEMCACHED_BEHAVIOR_NO_BLOCK
-
 BEHAVIORS = {
     "no_block" : MEMCACHED_BEHAVIOR_NO_BLOCK,
     "tcp_nodelay" : MEMCACHED_BEHAVIOR_TCP_NODELAY,
@@ -338,6 +336,8 @@ cdef class Client:
         #updated_behaviors = dict([(k,v) for k,v in kwargs.items() if BEHAVIORS.has_key(k)])
         
         self.behaviors = Behaviors(self, update=behaviors_dict)
+        self.behaviors['no_block'] = 1
+        self.behaviors['binary_protocol'] = 1
 
 #        if self.log is not None:
 #            self.log.write("cmemcached: set behavior of %d\n" % MEMCACHED_BEHAVIOR_BINARY_PROTOCOL)
@@ -361,17 +361,17 @@ cdef class Client:
         memcached_free(self.mc)
 
     def get_behaviors(self):
-        cdef uint64_t bval
-        res = {}
         cdef int i
-        cdef object r
+        cdef object bname
+        cdef uint64_t bval
+        results = {}
         
         for i from 0 <= i < 29:
             bval = memcached_behavior_get(self.mc, <memcached_behavior>i)
-            r= PyList_GetItem(self.b, i)
-            PyDict_SetItem(res, r, <int>bval)
+            bname = PyList_GetItem(self.b, i)
+            results[bname] = bval
         
-        return res
+        return results
         
     def set_behavior(self, flag, value):
         if flag not in BEHAVIORS:
