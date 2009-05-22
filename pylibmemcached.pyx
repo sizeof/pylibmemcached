@@ -453,7 +453,6 @@ cdef class Client:
         if key_len > MEMCACHED_MAX_KEY:
             return None
 
-        flags = 0
         c_val = memcached_get(self.mc, c_key, key_len, &bytes, &flags, &rc)
 
         if c_val:
