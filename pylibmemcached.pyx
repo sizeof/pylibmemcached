@@ -442,11 +442,11 @@ cdef class Client:
 
     def get(self, key):
         cdef char *c_key
+        cdef char *c_val
         cdef Py_ssize_t key_len
-        cdef uint32_t flags
+        cdef uint32_t flags = 0
         cdef size_t bytes
         cdef memcached_return rc
-        cdef char * c_val
 
         PyString_AsStringAndSize(key, &c_key, &key_len)
 
