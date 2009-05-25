@@ -343,10 +343,10 @@ cdef class Client:
 #            self.log.write("cmemcached: set behavior of %d\n" % MEMCACHED_BEHAVIOR_BINARY_PROTOCOL)
 #            self.log.flush()
 
-        set = MEMCACHED_HASH_FNV1A_32
-        memcached_behavior_set(self.mc, MEMCACHED_BEHAVIOR_HASH, set)
-        distribution = MEMCACHED_DISTRIBUTION_CONSISTENT
-        memcached_behavior_set(self.mc, MEMCACHED_BEHAVIOR_DISTRIBUTION, distribution)
+#        set = MEMCACHED_HASH_FNV1A_32
+#        memcached_behavior_set(self.mc, MEMCACHED_BEHAVIOR_HASH, set)
+#        distribution = MEMCACHED_DISTRIBUTION_CONSISTENT
+#        memcached_behavior_set(self.mc, MEMCACHED_BEHAVIOR_DISTRIBUTION, distribution)
 
     def add_server(self, servers):
         cdef memcached_return retval
